@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh_cn">
+<head>
+    <meta charset="UTF-8">
+    <title>重生！我用𝗗𝗠𝗔拷打魔王𝕊！</title>
+    <link rel="icon" href="static/img/icon.png">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="static/css/styles.css">
+
+    <!--  你麻麻的，这前端谁爱写谁写 -AK32767  -->
+</head>
+<body>
+    <div id="mainContent">
+        <div id="radar">
+            <div id="playerDot" draggable="false"></div>
+            <img id="map" src="static/img/no_map.png" draggable="false">
+        </div>
+
+        <div id="setting">
+            <div style="display: flex;">
+                <h4 style="color: rgb(0, 0, 0); font-family: 'HYWenHei-85W';">点大小</h4>
+                <input type="range" min="24" max="128" value="40" id="dotSizeSetter">
+                <button style="color: rgb(0, 0, 0); font-family: 'HYWenHei-85W';" onclick="{radar.playerDot.dotSize = 40; dotSizeSetter.value = 40;}">重设</button>
+                <script>
+                    dotSizeSetter.onchange = (_) => {
+                        radar.playerDot.dotSize = dotSizeSetter.value;
+                    }
+                </script>
+            </div>
+
+            <div style="display: flex;">
+                <h4 style="color: rgb(0, 0, 0); font-family: 'HYWenHei-85W';">地图缩放</h4>
+                <input type="range" min="0.5" max="3" step="0.1" value="1" id="MapSizeSetter">
+                <button style="color: rgb(0, 0, 0); font-family: 'HYWenHei-85W';" onclick="{radar.state.scale = 1; MapSizeSetter.value = 1;}">重设</button>
+                <script>
+                    MapSizeSetter.onchange = (_) => {
+                        radar.state.scale = MapSizeSetter.value;
+                    }
+                </script>
+            </div>
+
+            <div style="display: flex;">
+                <h4 style="color: rgb(0, 0, 0); font-family: 'HYWenHei-85W';">玩家绑定</h4>
+    <!--            <input type="checkbox">-->
+                <button onclick="{setBindPlayer()}">设置</button>
+            </div>
+        </div>
+
+
+
+    <!--    <div id="info_pop" onclick="hideInfoPop();">-->
+    <!--      <div class="info-pop-content">-->
+    <!--          <img src="/static/img/icon.png" class="info-pop-icon">-->
+    <!--        <h1 class="info-pop-h1">AK-TestTestTest32767</h1>-->
+    <!--      </div>-->
+    <!--    </div>-->
+
+    <!--    <div id="bomb_status">-->
+    <!--        <img src="/static/img/icon.png" draggable="false" style="width: 200px; height: 200px;">-->
+    <!--    </div>-->
+    </div>
+
+
+    <script>
+        const debug = 0;
+    </script>
+    <script src="static/js/utils.js"></script>
+<!--    <script src="static/js/radar.js"></script>-->
+    <script src="static/js/radar2.js"></script>
+    <script src="static/js/socketEvent.js"></script>
+    <script src="static/js/a.js"></script>
+</body>
+</html>
