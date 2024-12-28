@@ -282,7 +282,7 @@ class CS2(CS2MeowMode, CS2VmmMode):
         return cls
 
     @classmethod
-    def read_offset_snapshot(cls, file_name: str) -> Self:
+    def load_offset_snapshot(cls, file_name: str) -> Self:
         data = load(open(file_name, "rb"))
 
         signatures = type("Signatures", (SignaturesTypeHint,), dict(
@@ -301,6 +301,7 @@ class CS2(CS2MeowMode, CS2VmmMode):
         cls.signatures = signatures
         cls.schemas = schemas
 
+        print("snapshot loaded!")
         return cls
 
     # @classmethod

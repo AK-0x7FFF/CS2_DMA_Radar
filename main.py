@@ -9,6 +9,7 @@ import asyncio
 from game.entity_list import EntityList
 from memory.address import Address
 from memory.process import CS2
+from runtime.bomb_dot import bomb_dot
 from runtime.map_update import map_update
 from runtime.player_dot import player_dot
 from utils.memory_monitor import MemoryMonitor
@@ -38,7 +39,8 @@ async def main() -> None:
             CS2
             .meow_mode()
             .setup()
-            .dump_offset()
+            # .dump_offset()
+            .load_offset_snapshot("offset_snapshot.pkl")
         )
 
     sio = await socketio_setup()
@@ -65,7 +67,10 @@ async def main() -> None:
                 print("EntityList update failed, pause 1 sec.")
                 await asyncio.sleep(1)
             else:
-                try: await asyncio.gather(player_dot(sio), )
+                try: await asyncio.gather(
+                    player_dot(sio),
+                    bomb_dot(sio),
+                )
                 except Exception as error: print("error", error)
 
             Address.clear_cache()

@@ -2,23 +2,21 @@ var socket = io();
 
 socket.on("connect", function() {
     console.log('Connected to server');
-//    socket.send('Hello, server!');
 });
 
 socket.on("sync_map", function(data) {
-//    if (debug || true) {
-//        console.log("map_sync: " + data);
-//    }
     radar.map.update(data["map_name"]);
 });
 
 socket.on("player_dot", function(data) {
-//    radarWindow.config.rotation = Math.cos((new Date().getTime()) / 1000 * .4) * 360;
-//    radarWindow.config.scale = 0.5 + Math.sin((new Date().getTime()) / 1000 * 1.2) * 0.5;
     radar.players = data["players"];
-
-
 });
+
+socket.on("bomb_dot", function(data) {
+    radar.bombDot.update(data);
+});
+
+
 
 //socket.on("bomb_status", function(data) {
 //    if (debug) {

@@ -36,6 +36,14 @@ def run() -> None:
         except Exception: return False
         return True
 
+    @socketio.on("bomb_dot")
+    def bomb_dot(data: dict) -> bool:
+        try: socketio.emit("bomb_dot", data)
+        except Exception: return False
+        return True
+
+
+
     # @socketio.on("sync_map")
     # def sync_map(data: dict) -> bool:
     #     try: socketio.emit("sync_map", data, room=data.get("sid"))

@@ -49,6 +49,14 @@ body {
 .playerDot {
     position: absolute;
 }
+#bombDot {
+    position: absolute;
+    transform: translateY(-50%) translateX(-50%);
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    filter: drop-shadow(1.5px 1.5px 2px rgba(0, 0, 0, 1));
+}
 
 #bombIcon {
     position: absolute;
