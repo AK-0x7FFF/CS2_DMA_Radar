@@ -1,5 +1,5 @@
 from json import load
-from logging import info
+from logging import info, warn, error
 from os import getenv
 from time import time
 
@@ -13,6 +13,7 @@ from memory.process import CS2
 from runtime.bomb_dot import bomb_dot
 from runtime.map_update import map_update
 from runtime.player_dot import player_dot
+from utils.logger_setup import logger_setup
 from utils.memory_monitor import MemoryMonitor
 
 
@@ -21,11 +22,11 @@ async def socketio_setup() -> socketio.AsyncClient:
 
     @sio.event
     def connect() -> None:
-        info("Server Connected!")
+        info("🖧Server Connected!")
 
     @sio.event
     def disconnect() -> None:
-        info("Server Disconnected!")
+        info("🖧Server Disconnected!")
 
     await sio.connect('http://127.0.0.1:1090')
     return sio
@@ -40,8 +41,8 @@ async def main() -> None:
             CS2
             .meow_mode()
             .setup()
-            .dump_offset()
-            # .load_offset_snapshot("offset_snapshot.pkl")
+            # .dump_offset()
+            .load_offset_snapshot("offset_snapshot.pkl")
         )
 
     sio = await socketio_setup()
@@ -54,7 +55,7 @@ async def main() -> None:
     async def loop():
         while True:
             if not sio.connected:
-                print("waiting for reconnect")
+                warn("waiting for reconnect, pause 1 sec.")
                 await asyncio.sleep(1)
                 continue
 
@@ -65,14 +66,14 @@ async def main() -> None:
                     .update_player_entities(False, False)
                 )
             except Exception:
-                print("EntityList update failed, pause 1 sec.")
+                warn("EntityList update failed, pause 1 sec.")
                 await asyncio.sleep(1)
             else:
                 try: await asyncio.gather(
                     player_dot(sio),
                     bomb_dot(sio),
                 )
-                except Exception as error: print("error", error)
+                except Exception as err: error(err)
 
             Address.clear_cache()
             MemoryMonitor.reset()
@@ -83,5 +84,5 @@ async def main() -> None:
 
 
 if __name__ == '__main__':
-    # logger_setup()
+    logger_setup()
     asyncio.run(main())

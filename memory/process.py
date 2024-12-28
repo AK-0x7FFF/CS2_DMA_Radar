@@ -124,12 +124,9 @@ class CS2VmmMode:
         if not cls.is_process_exist():
             raise ProcessNotFoundError()
 
-        try:
-            cls.process: VmmProcess = cls.vmm_device.process(cls.PROCESS_NAME)
-        except Exception:
-            raise ProcessNotFoundError()
-        else:
-            info("Success Found %s Process: pid->%s" % (cls.PROCESS_NAME, cls.process.pid))
+        try: cls.process: VmmProcess = cls.vmm_device.process(cls.PROCESS_NAME)
+        except Exception: raise ProcessNotFoundError()
+        else: info("Success Found %s Process: pid->%s" % (cls.PROCESS_NAME, cls.process.pid))
 
         # get modules
         try:
@@ -156,6 +153,7 @@ class CS2VmmMode:
                 )]))
 
         cls.memory_read = VmmMemoryReadStruct.set_process(cls.process)
+        info("Found %s🎉" % (cls.PROCESS_NAME, ))
         return cls
 
 
@@ -194,6 +192,8 @@ class CS2(CS2MeowMode, CS2VmmMode):
                 cls, func_name,
                 getattr(super(cls, cls), func_name)
             )
+
+        info("toggle to 🐱[Meow Mode]!")
         return cls
 
 
@@ -219,6 +219,8 @@ class CS2(CS2MeowMode, CS2VmmMode):
                 cls, func_name,
                 getattr(super(cls.__bases__[0], cls), func_name)
             )
+
+        info("toggle to 👾[DMA Mode]!")
         return cls
 
 
@@ -247,11 +249,11 @@ class CS2(CS2MeowMode, CS2VmmMode):
 
         from game.offset.signatures.dump import dump_signatures
         cls.signatures = dump_signatures()
-        info("Success Dumped Signatures")
+        info("Success Dumped Signatures! 🔥🔥🔥")
 
         from game.offset.schemas.dump import dump_schemas
         cls.schemas = dump_schemas()
-        info("Success Dumped Schemas")
+        info("Success Dumped Schemas! 🔥🔥🔥")
 
         # from game.offset.convars.dump import dump_convars
         # cls.convars = dump_convars()
@@ -301,7 +303,7 @@ class CS2(CS2MeowMode, CS2VmmMode):
         cls.signatures = signatures
         cls.schemas = schemas
 
-        print("snapshot loaded!")
+        info("Success Load Snapshot! 🔥🔥🔥")
         return cls
 
     # @classmethod
