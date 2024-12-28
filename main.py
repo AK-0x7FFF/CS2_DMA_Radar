@@ -1,4 +1,5 @@
 from json import load
+from logging import info
 from os import getenv
 from time import time
 
@@ -20,11 +21,11 @@ async def socketio_setup() -> socketio.AsyncClient:
 
     @sio.event
     def connect() -> None:
-        print("Server Connected.")
+        info("Server Connected!")
 
     @sio.event
     def disconnect() -> None:
-        print("Server Disconnected.")
+        info("Server Disconnected!")
 
     await sio.connect('http://127.0.0.1:1090')
     return sio
@@ -39,8 +40,8 @@ async def main() -> None:
             CS2
             .meow_mode()
             .setup()
-            # .dump_offset()
-            .load_offset_snapshot("offset_snapshot.pkl")
+            .dump_offset()
+            # .load_offset_snapshot("offset_snapshot.pkl")
         )
 
     sio = await socketio_setup()
@@ -82,4 +83,5 @@ async def main() -> None:
 
 
 if __name__ == '__main__':
+    # logger_setup()
     asyncio.run(main())

@@ -286,8 +286,8 @@ class CS2(CS2MeowMode, CS2VmmMode):
         data = load(open(file_name, "rb"))
 
         signatures = type("Signatures", (SignaturesTypeHint,), dict(
-            client=data.get("signatures").get("client_dll").build(),
-            engine2=data.get("signatures").get("engine2_dll").build()
+            client=data.get("signatures").get("client_dll").update_module_base(CS2.client.base).build(),
+            engine2=data.get("signatures").get("engine2_dll").update_module_base(CS2.engine2.base).build()
         ))()
 
         def dict_2_class(arg: dict[str, int | dict]):

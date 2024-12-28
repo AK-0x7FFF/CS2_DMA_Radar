@@ -35,10 +35,12 @@ class Signatures(dict):
         return self
 
     def update_module_base(self, module_base: int) -> Self:
-        return self.update({
+        self.update({
             signature_name: pattern.update_module_base(module_base)
             for signature_name, pattern in self.items()
         })
+
+        return self
 
     def build(self) -> SignaturesClientTypeHint | SignaturesEngine2TypeHint:
         signatures = type("Signatures", (), {
