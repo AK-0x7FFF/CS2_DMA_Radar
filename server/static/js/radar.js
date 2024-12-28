@@ -155,7 +155,9 @@ var radar = new (function() {
 
                 bomb.css({
                     "left": x,
-                    "top": y
+                    "top": y,
+                    "width": 33 * this.parent.state.scale + "px",
+                    "height": 24 * this.parent.state.scale + "px"
                 })
                 bomb.show()
             }

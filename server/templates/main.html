@@ -14,14 +14,14 @@
 <body>
     <div id="mainContent">
         <div id="radar">
-            <img id="bombDot" src="static/img/c4.svg" draggable="false" >
+            <img id="bombDot" src="static/img/c4.png" draggable="false" >
             <div id="playerDot" draggable="false"></div>
             <img id="map" src="static/img/no_map.png" draggable="false">
         </div>
 
         <div id="setting">
             <div style="display: flex;">
-                <h4 style="color: rgb(0, 0, 0); font-family: 'HYWenHei-85W';">点大小</h4>
+                <h4 style="color: rgb(0, 0, 0); font-family: 'HYWenHei-85W';">玩家点大小</h4>
                 <input type="range" min="24" max="128" value="40" id="dotSizeSetter">
                 <button style="color: rgb(0, 0, 0); font-family: 'HYWenHei-85W';" onclick="{radar.playerDot.dotSize = 40; dotSizeSetter.value = 40;}">重设</button>
                 <script>
