@@ -27,8 +27,10 @@ def run() -> None:
 
     @socketio.on('connect')
     def connect():
-        client_ip = request.remote_addr
         print(f"Connected! ip->%s" % (request.remote_addr, ))
+        try: socketio.emit("connected", request.remote_addr)
+        except Exception: return False
+        return True
 
     @socketio.on("player_dot")
     def player_dot(data: dict) -> bool:

@@ -6,3 +6,4 @@ python-socketio~=5.12.0
 numpy~=2.2.1
 memprocfs~=5.13.0
 python-dotenv~=1.0.1
+discord.py~=2.4.0
