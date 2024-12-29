@@ -1,13 +1,11 @@
-from json import load
-from logging import info, warn, error, warning, WARNING, INFO
+from logging import info, error, warning
 from os import getenv
-from time import time
 
 import socketio
-from discord import Intents, Embed, ui, ButtonStyle, Interaction
-from discord.ext import commands
-from discord.ext.commands import Bot
-from discord.utils import setup_logging
+# from discord import Intents, Embed, ui, ButtonStyle, Interaction
+# from discord.ext import commands
+# from discord.ext.commands import Bot
+# from discord.utils import setup_logging
 from dotenv import load_dotenv
 import asyncio
 
@@ -75,6 +73,13 @@ async def socketio_setup() -> socketio.AsyncClient:
 #         lock.set()
 #
 #     await bot.start(getenv("DISCORD_TOKEN"))
+def memory_setup() -> None:
+    (
+        CS2
+        .setup()
+        .dump_offset()
+        # .load_offset_snapshot("offset_snapshot.pkl")
+    )
 
 async def main() -> None:
     load_dotenv()
@@ -91,20 +96,13 @@ async def main() -> None:
     def sync_map_request() -> dict[str, float | str]:
         return map_update()
 
-    @lambda func: func()
-    def setup() -> None:
-        (
-            CS2
-            .meow_mode()
-            .setup()
-            .dump_offset()
-            # .load_offset_snapshot("offset_snapshot.pkl")
-        )
+    CS2.meow_mode()
+    memory_setup()
 
     async def loop() -> None:
         while True:
             if not sio.connected:
-                warning("waiting for reconnect, pause 1 sec.")
+                warning("⚠️ waiting for reconnect, pause 1 sec.")
                 await asyncio.sleep(1)
                 continue
 
@@ -115,7 +113,7 @@ async def main() -> None:
                     .update_player_entities(False, False)
                 )
             except Exception:
-                warning("EntityList update failed, pause 1 sec.")
+                warning("⚠️ EntityList update failed, pause 1 sec.")
                 await asyncio.sleep(1)
             else:
                 try: await asyncio.gather(
@@ -128,10 +126,24 @@ async def main() -> None:
             MemoryMonitor.reset()
 
     async def life_check_loop() -> None:
+        nonlocal main_loop
+
         while True:
-            print()
+            is_alive = CS2.is_process_exist()
+            if is_alive: await asyncio.sleep(3)
+            else:
+                main_loop.cancel()
+                info("%s dead💥, waiting game start..." % CS2.PROCESS_NAME)
+
+                while not CS2.is_process_exist(): await asyncio.sleep(1)
+                while not CS2.is_process_ready(): await asyncio.sleep(1)
+                memory_setup()
+
+                main_loop = asyncio.create_task(loop())
+
 
     main_loop = asyncio.create_task(loop())
+    asyncio.create_task(life_check_loop())
     await sio.wait()
 
 
