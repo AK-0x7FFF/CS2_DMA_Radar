@@ -1,3 +1,4 @@
+from functools import wraps
 from typing import Callable, Any
 
 
@@ -27,6 +28,7 @@ class MemoryMonitor:
     @staticmethod
     def read_decorator(byte_size_call: Callable[[tuple, dict], int]) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
         def decorator(func: Callable) -> Callable:
+            @wraps(func)
             def wrapper(*func_args, **func_kwargs) -> Any:
                 if MemoryMonitor.enable:
                     MemoryMonitor.read_count_add()

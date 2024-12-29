@@ -35,55 +35,55 @@ async def socketio_setup() -> socketio.AsyncClient:
 
     @sio.event
     async def connected(ip: str) -> None:
-        msg = Embed()
-        msg.set_author(name="%s 已连接" % ip, icon_url=f"http://122.100.156.26:{getenv("SERVER_PORT")}/static/img/icon.png")
-        await dc.get_channel(int(getenv("TEXT_CHANNEL"))).send(embed=msg)
-
+        ...
+        # msg = Embed()
+        # msg.set_author(name="%s 已连接" % ip, icon_url=f"http://122.100.156.26:{getenv("SERVER_PORT")}/static/img/icon.png")
+        # await dc.get_channel(int(getenv("TEXT_CHANNEL"))).send(embed=msg)
 
     await sio.connect(f"http://127.0.0.1:{getenv("SERVER_PORT")}")
     return sio
 
-async def discord_setup() -> Bot:
-    intents = Intents.default()
-    intents.members = True
-    intents.message_content = True
-    bot = commands.Bot(command_prefix="|", intents=intents)
-    setup_logging(level=INFO)
+# async def discord_setup() -> Bot:
+#     intents = Intents.default()
+#     intents.members = True
+#     intents.message_content = True
+#     bot = commands.Bot(command_prefix="|", intents=intents)
+#     setup_logging(level=INFO)
+#
+#     @bot.command()
+#     async def hello(ctx):
+#         await ctx.send('叫叫叫，叫你妈叫')
+#
+#     return bot
 
-    @bot.command()
-    async def hello(ctx):
-        await ctx.send('叫叫叫，叫你妈叫')
-
-    return bot
-
-async def discord_start(bot: Bot, lock: asyncio.Event) -> None:
-    @bot.event
-    async def on_ready():
-        print("👾%s" % bot.user.name)
-        msg = Embed(title="👾 **DMA，启动！** 👾")
-        msg.set_thumbnail(url=f"http://122.100.156.26:{getenv("SERVER_PORT")}/static/img/icon.png")
-        msg.add_field(name="",
-                      value="[%s](%s)" % ("点击自动下载原神", f"http://122.100.156.26:{getenv("SERVER_PORT")}/"),
-                      inline=False)
-
-        # class MyView(ui.View):
-        #     @ui.button(label='点击下载原神', style=ButtonStyle.blurple)
-        #     async def on_button_click(self, interaction: Interaction, button: ui.Button) -> None:
-        #         await interaction.response.edit_message(content='Button clicked!')
-
-        await bot.get_channel(int(getenv("TEXT_CHANNEL"))).send(embed=msg)  # , view=MyView()
-        lock.set()
-
-    await bot.start(getenv("DISCORD_TOKEN"))
+# async def discord_start(bot: Bot, lock: asyncio.Event) -> None:
+#     @bot.event
+#     async def on_ready():
+#         print("👾%s" % bot.user.name)
+#         msg = Embed(title="👾 **DMA，启动！** 👾")
+#         msg.set_thumbnail(url=f"http://122.100.156.26:{getenv("SERVER_PORT")}/static/img/icon.png")
+#         msg.add_field(name="",
+#                       value="[%s](%s)" % ("点击自动下载原神", f"http://122.100.156.26:{getenv("SERVER_PORT")}/"),
+#                       inline=False)
+#
+#         # class MyView(ui.View):
+#         #     @ui.button(label='点击下载原神', style=ButtonStyle.blurple)
+#         #     async def on_button_click(self, interaction: Interaction, button: ui.Button) -> None:
+#         #         await interaction.response.edit_message(content='Button clicked!')
+#
+#         await bot.get_channel(int(getenv("TEXT_CHANNEL"))).send(embed=msg)  # , view=MyView()
+#         lock.set()
+#
+#     await bot.start(getenv("DISCORD_TOKEN"))
 
 async def main() -> None:
     load_dotenv()
 
-    global dc
-    dc = await discord_setup()
-    lock = asyncio.Event()
-    asyncio.create_task(discord_start(dc, lock))
-    await lock.wait()
+    # global dc
+    # dc = await discord_setup()
+    # lock = asyncio.Event()
+    # asyncio.create_task(discord_start(dc, lock))
+    # await lock.wait()
 
     sio = await socketio_setup()
 
@@ -97,8 +97,8 @@ async def main() -> None:
             CS2
             .meow_mode()
             .setup()
-            # .dump_offset()
-            .load_offset_snapshot("offset_snapshot.pkl")
+            .dump_offset()
+            # .load_offset_snapshot("offset_snapshot.pkl")
         )
 
     async def loop() -> None:

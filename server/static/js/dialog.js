@@ -3,6 +3,7 @@ function setBindPlayer() {
         "class": "dialog",
         "click": () => {
             dialog.remove();
+            $("#mainContent").removeClass("blur")
         }
     })
     content = $("<div></div>", {
@@ -14,6 +15,7 @@ function setBindPlayer() {
         click: () => {
             radar.player_binding = null;
             dialog.remove();
+            $("#mainContent").removeClass("blur")
         }
     }));
     radar.players.forEach((player) => {
@@ -24,13 +26,14 @@ function setBindPlayer() {
             click: () => {
                 radar.player_binding = player["steam_id"];
                 dialog.remove();
+                $("#mainContent").removeClass("blur")
             }
         })
         content.append(button);
 
     });
 
-
+    $("#mainContent").addClass("blur")
     dialog.append(content)
     $("body").append(dialog)
 }
