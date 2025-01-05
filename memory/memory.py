@@ -94,7 +94,11 @@ class MemoryReadAbstract(ABC):
     # @MemoryMonitor.read_decorator(lambda _, kwargs: kwargs.get("byte_size", 50))
     def read_str(cls, address: int, byte_size: int = 50) -> str | None:
         byte = cls.read_memory(address, byte_size)
-        return byte.split(b"\x00")[0].decode("utf-8")
+        if byte is None or not len(byte): return None
+
+        try: return byte.split(b"\x00")[0].decode("utf-8")
+        except Exception: return None
+
 
 
 class MeowMemoryReadStruct(MemoryReadAbstract):

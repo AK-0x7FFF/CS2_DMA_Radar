@@ -86,6 +86,7 @@ class AddressMemoryRead(AddressCacheSystem):
     @AddressCacheSystem.address_caching_decorator
     def vec3(self) -> Optional[Vec3]: return Vec3(*CS2.memory_read.read_vec(self.address, 3))
 
+    @AddressCacheSystem.address_caching_decorator
     def str(self, size: int) -> Optional[str]: return CS2.memory_read.read_str(self.address, size)
 
 
