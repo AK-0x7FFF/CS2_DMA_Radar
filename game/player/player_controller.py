@@ -35,3 +35,11 @@ class PlayerController:
             .offset(CS2.schemas.client_dll.CBasePlayerController.m_steamID)
             .u64()
         )
+
+    @property
+    def team_color(self) -> int | None:
+        return (
+            self.controller_address.copy()
+            .offset(CS2.schemas.client_dll.CCSPlayerController.m_iCompTeammateColor)
+            .i8()
+        )
