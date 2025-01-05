@@ -1,4 +1,5 @@
 from sys import path
+from tomllib import load
 
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO
@@ -6,8 +7,11 @@ from psutil import net_connections
 
 
 def run() -> None:
-    port = 1090
+    with open("config.toml", "rb") as config_file:
+        global config
+        config = load(config_file)
 
+    port = config.get("server_port", 0)
     if port <= 1024:
         raise ValueError()
     if any((connection.status == "LISTEN" and connection.laddr.port == port) for connection in net_connections()):

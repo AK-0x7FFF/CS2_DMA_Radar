@@ -1,12 +1,15 @@
 from logging import info, error, warning
-from os import getenv
+from operator import itemgetter
+from tomllib import load
+
+# from os import getenv
 
 import socketio
 # from discord import Intents, Embed, ui, ButtonStyle, Interaction
 # from discord.ext import commands
 # from discord.ext.commands import Bot
 # from discord.utils import setup_logging
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import asyncio
 
 
@@ -37,8 +40,10 @@ async def socketio_setup() -> socketio.AsyncClient:
         # msg = Embed()
         # msg.set_author(name="%s 已连接" % ip, icon_url=f"http://122.100.156.26:{getenv("SERVER_PORT")}/static/img/icon.png")
         # await dc.get_channel(int(getenv("TEXT_CHANNEL"))).send(embed=msg)
+    server_ip, server_port = itemgetter("server_ip", "server_port")(config)
 
-    await sio.connect(f"http://127.0.0.1:{getenv("SERVER_PORT")}")
+
+    await sio.connect(f"http://{server_ip}:{server_port}")
     return sio
 
 # async def discord_setup() -> Bot:
@@ -77,12 +82,15 @@ def memory_setup() -> None:
     (
         CS2
         .setup()
-        .dump_offset()
-        # .load_offset_snapshot("offset_snapshot.pkl")
+        # .dump_offset()
+        .load_offset_snapshot("offset_snapshot.pkl")
     )
 
 async def main() -> None:
-    load_dotenv()
+    # load_dotenv()
+    with open("config.toml", "rb") as config_file:
+        global config
+        config = load(config_file)
 
     # global dc
     # dc = await discord_setup()
@@ -110,7 +118,7 @@ async def main() -> None:
                 (
                     EntityList
                     .update_entity_list_address()
-                    .update_player_entities(False, False)
+                    .update_player_entities(True, True)
                 )
             except Exception:
                 warning("⚠️ EntityList update failed, pause 1 sec.")
@@ -121,6 +129,7 @@ async def main() -> None:
                     bomb_dot(sio),
                 )
                 except Exception as err: error(err)
+            # await asyncio.sleep(uniform(0, .2))
 
             Address.clear_cache()
             MemoryMonitor.reset()
