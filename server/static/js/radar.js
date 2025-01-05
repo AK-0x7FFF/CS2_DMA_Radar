@@ -41,9 +41,9 @@ var radar = new (function() {
     this.player_binding = null;
 
     setInterval(() => {
-        this.state.x = 512;
-        this.state.y = 512;
-        this.state.rotation = 0;
+//        this.state.x = 512;
+//        this.state.y = 512;
+//        this.state.rotation = 0;
 
         if (this.player_binding != null && this.player_binding != 0) {
             this.players.forEach((player) => {
@@ -62,7 +62,7 @@ var radar = new (function() {
         this.map.draw();
         this.playerDot.draw();
         this.bombDot.draw();
-    }, 1 / 96);
+    }, 1 / tick);
 
     this.map = new (function(parent) {
         this.parent = parent;
@@ -70,7 +70,10 @@ var radar = new (function() {
 
         this.update = function(mapName) {
             this.mapName = mapName;
-            $("#map").attr("src", (mapName == null || mapName == "<empty>") ? "static/img/no_map.png" : "static/img/maps/" + mapName + ".png");
+//            $("#map").attr("src", (mapName == null || mapName == "<empty>") ? "static/img/no_map.png" : "static/img/maps/" + mapName + ".png");
+            $("#map").css({
+                "background-image": "url(\"/static/img/" + ((this.mapName == null || this.mapName == "<empty>") ? "no_map.png" : "maps/" + this.mapName + ".png") + "\")"
+            });
         };
 
         this.draw = function() {
@@ -80,7 +83,6 @@ var radar = new (function() {
 
             $("#map").css({
                 "transform": "translate(-50%, -50%) rotate(" + this.parent.state.rotation + "deg)",
-//                    "transform": "rotate(" + this.parent.state.rotation + "deg)",
                 "left": x + "px",
                 "top": y + "px",
                 "width": this.parent.state.scale * this.parent.element.offsetWidth + "px",
@@ -100,16 +102,17 @@ var radar = new (function() {
                 $("#playerDot").empty();
 
                 for (let i = 0; i < this.parent.players.length; i++) {
-                    dot = $("<img>", {
+                    dot = $("<div>", {
                         "class": "playerDot",
-                        "draggable": "false",
+                        "style": {
+                            "left": (this.parent.element.offsetWidth / 2) + "px",
+                            "top": (this.parent.element.offsetHeight / 2) + "px",
+                        }
                     });
-//                    dot.attr("id", "dot");
-//                    dot.attr("draggable", "false");
                     $("#playerDot").append(dot);
                 }
             }
-            dots = $("#playerDot img")
+            dots = $("#playerDot div")
 
             this.parent.players.forEach((player, index) => {
                 targetMapData = this.parent.map_data[this.parent.map.mapName];
@@ -121,14 +124,23 @@ var radar = new (function() {
                 d = -player["direction"]["y"] + 90 + this.parent.state.rotation;
 
                 dot = dots.eq(index)
-                dot.attr("src",  player["team_num"] == 2 ? "static/img/player_dot_t.png" : player["team_num"] == 3 ? "static/img/player_dot_ct.png" : "static/img/player_dot.png");
+//                dot.attr("src",  );
+                imageUrl = "/static/img/" + (player["team_num"] == 2 ? "player_dot_t.png" : player["team_num"] == 3 ? "player_dot_ct.png" : "player_dot.png")
                 dot.css({
                     "transform": "translate(-50%, -50%) rotate(" + d + "deg)",
-                    "left": x + "px",
-                    "top": y + "px",
+//                    "left": x + "px",
+//                    "top": y + "px",
+                    "background-image": "url(\"" + imageUrl + "\")",
                     "width": this.dotSize * this.parent.state.scale + "px",
                     "height": this.dotSize * this.parent.state.scale + "px",
                 });
+
+                lastLeft = parseFloat(dot.css("left"))
+                lastTop = parseFloat(dot.css("top"))
+                dot.css({
+                    "left": (lastLeft + ((x - lastLeft) / 16)) + "px",
+                    "top": (lastTop + ((y - lastTop) / 16)) + "px",
+                })
             });
         };
     })(this)

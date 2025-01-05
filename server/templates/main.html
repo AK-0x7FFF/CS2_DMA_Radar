@@ -8,18 +8,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="static/css/misc.css">
+    <link rel="stylesheet" href="static/css/radar.css">
 
     <!--  你麻麻的，这前端谁爱写谁写 -AK32767  -->
 </head>
 <body>
-    <div id="mainContent">
+    <div id="mainContent" style="position: absolute; left: 0px; top: 0px;">
         <div id="radar">
-            <img id="bombDot" src="static/img/c4.png" draggable="false" >
-            <div id="playerDot" draggable="false"></div>
-            <img id="map" src="static/img/no_map.png" draggable="false">
+            <div id="bombDot" style="display: none;"></div>
+            <div id="playerDot"></div>
+            <div id="map"></div>
         </div>
 
-        <div id="setting">
+        <div class="window" style="display: none;">
             <div style="display: flex;">
                 <h4 style="color: rgb(0, 0, 0); font-family: 'HYWenHei-85W';">玩家点大小</h4>
                 <input type="range" min="24" max="128" value="40" id="dotSizeSetter">
@@ -49,23 +51,19 @@
             </div>
         </div>
 
+        <div id="debugWindow" class="window" style="top: 50%;" >
+            <h3></h3>
+            <h3></h3>
+            <h3></h3>
+        </div>
 
-
-    <!--    <div id="info_pop" onclick="hideInfoPop();">-->
-    <!--      <div class="info-pop-content">-->
-    <!--          <img src="/static/img/icon.png" class="info-pop-icon">-->
-    <!--        <h1 class="info-pop-h1">AK-TestTestTest32767</h1>-->
-    <!--      </div>-->
-    <!--    </div>-->
-
-    <!--    <div id="bomb_status">-->
-    <!--        <img src="/static/img/icon.png" draggable="false" style="width: 200px; height: 200px;">-->
-    <!--    </div>-->
     </div>
+    <button id="settingBtn" onclick="{openSettingDialog(); }">Setting</button>
 
 
     <script>
         const debug = 0;
+        const tick = 64;
     </script>
     <script src="static/js/utils.js"></script>
     <script src="static/js/radar.js"></script>

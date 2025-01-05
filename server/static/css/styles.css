@@ -8,85 +8,37 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
-}
-
-#radar {
-    position: absolute;
-    /* left: 50%; */
-    /* top: 50%; */
-    margin: 0 0;
-    /* transform: translateY(-50%) translateX(-50%); */
-    width: 85vmin;
-    height: 85vmin;
-    border-radius: 30px;
-    background-color: rgba(255, 255, 255, .1);
+    font-family: 'HYWenHei-85W';
     overflow: hidden;
 }
 
-#setting {
-    position: absolute;
-    margin: 0 0;
-    border-radius: 30px;
-    background-color: rgba(255, 255, 255, .1);
-    padding: 8px;
-}
 
 
-#map {
+#settingBtn {
     position: absolute;
-    z-index: 0;
-    filter: drop-shadow(5px 5px 8px rgba(0, 0, 0, .7));
+    transform: translateY(0) translateX(-50%);
+    left: 50%;
+    z-index: 128;
 }
-#playerDot {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    border-radius: 30px;
-    filter: drop-shadow(1.5px 1.5px 2px rgba(0, 0, 0, 1));
-    overflow: hidden;
+.settingText {
+    color: rgb(255, 255, 255);
+    margin: 0px;
+    font-size: 24px;
+    white-space: nowrap;
 }
-.playerDot {
-    position: absolute;
-}
-#bombDot {
-    position: absolute;
-    transform: translateY(-50%) translateX(-50%);
-    z-index: 1;
-    filter: drop-shadow(1.5px 1.5px 2px rgba(0, 0, 0, 1));
+.settingRangeBar {
+    width: 350px;
+    height: 24px;
 }
 
-#bombIcon {
+.dialogBackground {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 2;
-    border-radius: 30px;
-    filter: drop-shadow(5px 5px 8px rgba(0, 0, 0, 1));
-}
-
-#player_status {
-    position: fixed;
-    opacity: 0;
-    border-radius: 30px;
-    background-color: rgba(255, 255, 255, .1);
-}
-
-#bomb_status {
-    position: fixed;
-    opacity: 0;
-    border-radius: 30px;
-    background-color: rgba(255, 255, 255, .1);
-}
-
-.dialog {
-    position: fixed;
     left: 0px;
     top: 0px;
     width: 100%;
     height: 100%;
-    z-index: 32767;
-    /* background-color : rgba(0, 0, 0, 0.4); */
+    z-index: 129;
+    background-color : rgba(0, 0, 0, 0.4);
 }
 .dialogContent {
     position: fixed;
@@ -100,25 +52,4 @@ body {
     padding: 12px;
 }
 
-.blur {
-    filter: blur(20px);
-}
 
-.fade-in {
-    animation-name: fade-in;
-    animation-duration: 0.3s;
-    animation-fill-mode: forwards;
-}
-.fade-out {
-    animation-name: fade-out;
-    animation-duration: 0.3s;
-    animation-fill-mode: forwards;
-}
-@keyframes fade-in {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-@keyframes fade-out {
-    from {opacity: 1;}
-    to {opacity: 0; display: none;}
-}

@@ -10,10 +10,18 @@ socket.on("sync_map", function(data) {
 
 socket.on("player_dot", function(data) {
     radar.players = data["players"];
+    if (debug) {
+        $("#debugWindow h3").eq(0).text("player_dot: " + Math.round(((new Date().getTime() / 1000) - data["t"]) * 1000) + "ms")
+    }
+
 });
 
 socket.on("bomb_dot", function(data) {
     radar.bombDot.update(data);
+    if (debug) {
+        $("#debugWindow h3").eq(1).text("bomb_dot: " + Math.round(((new Date().getTime() / 1000) - data["t"]) * 1000) + "ms")
+    }
+
 });
 
 

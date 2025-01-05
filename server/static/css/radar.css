@@ -1,0 +1,51 @@
+#radar {
+    position: absolute;
+    margin: 0 0;
+    width: 100vmin;
+    height: 100vmin;
+    border-radius: 30px;
+    background-color: rgba(255, 255, 255, .1);
+    overflow: hidden;
+}
+
+#map {
+    position: absolute;
+    z-index: 0;
+    filter: drop-shadow(5px 5px 8px rgba(0, 0, 0, .7));
+    background-position: 50%;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+#playerDot {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    border-radius: 30px;
+    filter: drop-shadow(1.5px 1.5px 2px rgba(0, 0, 0, 1));
+}
+.playerDot {
+    position: absolute;
+    background-position: 50%;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+#bombDot {
+    position: absolute;
+    background-position: 50%;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-image: url("/static/img/c4.png");
+    transform: translateY(-50%) translateX(-50%);
+    z-index: 1;
+    animation: bombGlow 0.5s infinite alternate;
+}
+@keyframes bombGlow {
+    from {
+        filter: drop-shadow(0 0 0px rgb(0, 0, 0));
+    }
+    to {
+        filter: drop-shadow(0 0 12px rgb(255, 0, 0));
+    }
+}
