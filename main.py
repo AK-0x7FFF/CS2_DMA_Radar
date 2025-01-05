@@ -104,7 +104,10 @@ async def main() -> None:
     def sync_map_request() -> dict[str, float | str]:
         return map_update()
 
-    CS2.meow_mode()
+    match config.get("memory_mode"):
+        case "meow": CS2.meow_mode()
+        case "vmm": CS2.vmm_mode()
+        case _: raise ValueError()
     memory_setup()
 
     async def loop() -> None:
