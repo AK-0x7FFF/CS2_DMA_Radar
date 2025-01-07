@@ -155,7 +155,6 @@ class CS2VmmMode:
         cls.memory_read = VmmMemoryReadStruct.set_process(cls.process)
         info("Found %s🎉" % (cls.PROCESS_NAME, ))
 
-        print(cls.process.state)
         return cls
 
 

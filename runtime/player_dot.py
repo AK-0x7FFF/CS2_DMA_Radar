@@ -11,6 +11,7 @@ async def player_dot(sio: AsyncClient) -> None:
     for player_entity in EntityList.player_entities:
         if not player_entity: continue
         if not player_entity.health: continue
+
         if (pos := player_entity.pos) is None: continue
         if (direction := player_entity.angle) is None: continue
 
@@ -29,7 +30,11 @@ async def player_dot(sio: AsyncClient) -> None:
         ))
 
     if sio.connected:
-        await sio.call('player_dot', dict(
+        asyncio.create_task(sio.call('player_dot', dict(
             t=time(),
             players=player_dot_data
-        ), timeout=1)
+        ), timeout=1))
+        # await sio.call('player_dot', dict(
+        #     t=time(),
+        #     players=player_dot_data
+        # ), timeout=1)

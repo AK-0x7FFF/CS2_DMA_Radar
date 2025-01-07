@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from struct import unpack
 from typing import Self
 
-from memprocfs import FLAG_NOCACHE
+from memprocfs import FLAG_NOCACHE, FLAG_NOCACHEPUT
 from memprocfs.vmmpyc import VmmProcess
 
 from libs.pyMeow import MeowProcess
@@ -126,5 +126,5 @@ class VmmMemoryReadStruct(MemoryReadAbstract):
     @classmethod
     @MemoryMonitor.read_decorator(lambda args, __: args[2])
     def read_memory(cls, address: int, byte_size: int) -> bytes | None:
-        return cls._process.memory.read(address, byte_size, FLAG_NOCACHE)
+        return cls._process.memory.read(address, byte_size, FLAG_NOCACHE | FLAG_NOCACHEPUT)
 

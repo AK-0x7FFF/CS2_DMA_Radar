@@ -3,7 +3,7 @@ from typing import Callable, Any
 
 
 class MemoryMonitor:
-    enable: bool = True
+    enable: bool = False
     memory_read_count: int = 0
     memory_read_bytes: int = 0
 

@@ -1,5 +1,6 @@
 from logging import info, error, warning
 from operator import itemgetter
+from random import uniform
 from tomllib import load
 
 # from os import getenv
@@ -21,6 +22,7 @@ from runtime.map_update import map_update
 from runtime.player_dot import player_dot
 from utils.logger_setup import logger_setup
 from utils.memory_monitor import MemoryMonitor
+from utils.misc import TimeoutCounter
 
 
 async def socketio_setup() -> socketio.AsyncClient:
@@ -111,18 +113,22 @@ async def main() -> None:
     memory_setup()
 
     async def loop() -> None:
+        player_list_timer = TimeoutCounter(0)
+        player_list_timer.start(0)
+
         while True:
+            # with TimeCounter():
             if not sio.connected:
                 warning("⚠️ waiting for reconnect, pause 1 sec.")
                 await asyncio.sleep(1)
                 continue
 
             try:
-                (
-                    EntityList
-                    .update_entity_list_address()
-                    .update_player_entities(True, True)
-                )
+                if player_list_timer.check():
+                    EntityList.update_entity_list_address()
+                    EntityList.update_player_entities(False, False)
+
+                    player_list_timer.start(.8)
             except Exception:
                 warning("⚠️ EntityList update failed, pause 1 sec.")
                 await asyncio.sleep(1)
@@ -135,7 +141,7 @@ async def main() -> None:
             # await asyncio.sleep(uniform(0, .2))
 
             Address.clear_cache()
-            MemoryMonitor.reset()
+            # MemoryMonitor.reset()
 
     async def life_check_loop() -> None:
         nonlocal main_loop
