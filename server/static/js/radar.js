@@ -99,18 +99,34 @@ var radar = new (function() {
 
         this.draw = function() {
             if ($("#playerDot").children().length != this.parent.players.length) {
-                $("#playerDot").empty();
-
-                for (let i = 0; i < this.parent.players.length; i++) {
-                    dot = $("<div>", {
-                        "class": "playerDot",
-                        "style": {
-                            "left": (this.parent.element.offsetWidth / 2) + "px",
-                            "top": (this.parent.element.offsetHeight / 2) + "px",
-                        }
-                    });
-                    $("#playerDot").append(dot);
+                lengthDiffer = $("#playerDot").children().length - this.parent.players.length
+                if (lengthDiffer < 0) {
+                    for (let i = 0; i < Math.abs(lengthDiffer); i++) {
+                        dot = $("<div>", {
+                            "class": "playerDot",
+                            "style": {
+                                "left": (this.parent.element.offsetWidth / 2) + "px",
+                                "top": (this.parent.element.offsetHeight / 2) + "px",
+                            }
+                        });
+                        $("#playerDot").append(dot);
+                    }
+                } else {
+                    dots = $("#playerDot div").slice(-1 - Math.abs(lengthDiffer), -1).remove()
                 }
+
+//                $("#playerDot").empty();
+//
+//                for (let i = 0; i < this.parent.players.length; i++) {
+//                    dot = $("<div>", {
+//                        "class": "playerDot",
+//                        "style": {
+//                            "left": (this.parent.element.offsetWidth / 2) + "px",
+//                            "top": (this.parent.element.offsetHeight / 2) + "px",
+//                        }
+//                    });
+//                    $("#playerDot").append(dot);
+//                }
             }
             dots = $("#playerDot div")
 
@@ -128,19 +144,19 @@ var radar = new (function() {
                 imageUrl = "/static/img/" + (player["team_num"] == 2 ? "player_dot_t.png" : player["team_num"] == 3 ? "player_dot_ct.png" : "player_dot.png")
                 dot.css({
                     "transform": "translate(-50%, -50%) rotate(" + d + "deg)",
-//                    "left": x + "px",
-//                    "top": y + "px",
+                    "left": x + "px",
+                    "top": y + "px",
                     "background-image": "url(\"" + imageUrl + "\")",
                     "width": this.dotSize * this.parent.state.scale + "px",
                     "height": this.dotSize * this.parent.state.scale + "px",
                 });
 
-                lastLeft = parseFloat(dot.css("left"))
-                lastTop = parseFloat(dot.css("top"))
-                dot.css({
-                    "left": (lastLeft + ((x - lastLeft) / 16)) + "px",
-                    "top": (lastTop + ((y - lastTop) / 16)) + "px",
-                })
+//                lastLeft = parseFloat(dot.css("left"))
+//                lastTop = parseFloat(dot.css("top"))
+//                dot.css({
+//                    "left": (lastLeft + ((x - lastLeft) / 1)) + "px",
+//                    "top": (lastTop + ((y - lastTop) / 1)) + "px",
+//                })
             });
         };
     })(this)

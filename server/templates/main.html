@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="static/css/styles.css">
     <link rel="stylesheet" href="static/css/misc.css">
     <link rel="stylesheet" href="static/css/radar.css">
+    <link rel="stylesheet" href="static/css/sidebar.css">
 
     <!--  你麻麻的，这前端谁爱写谁写 -AK32767  -->
 </head>
@@ -58,8 +59,43 @@
         </div>
 
     </div>
-    <button id="settingBtn" onclick="{openSettingDialog(); }">Setting</button>
 
+    <button id="sidebarToggle" onclick="{sidebarToggle(); }">asd</button>
+    <div id="sidebar">
+        <div class="row">
+            <h4>已绑定：</h4>
+            <button>玩家绑定</button>
+        </div>
+
+        <div class="row">
+            <h4>玩家点大小</h4>
+            <input id="playerDotInput" type="range" min="24" max="128" step="1" value="40">
+            <script>
+                $("#playerDotInput").change((event) => {
+                    radar.playerDot.dotSize = parseFloat(event.target.value)
+                });
+            </script>
+        </div>
+        <div class="row">
+            <h4>地图缩放</h4>
+            <input id="mapScaleInput" type="range" min="0.5" max="3" step="0.05" value="1">
+            <script>
+                $("#mapScaleInput").change((event) => {
+                    radar.state.scale = parseFloat(event.target.value)
+                });
+            </script>
+        </div>
+        <div class="row">
+            <h4>地图旋转</h4>
+            <input id="mapRotationInput" type="range" min="0" max="360" step="45" value="0">
+            <script>
+                $("#mapRotationInput").change((event) => {
+                    radar.state.rotation = parseFloat(event.target.value)
+                });
+            </script>
+        </div>
+
+    </div>
 
     <script>
         const debug = 0;
@@ -68,6 +104,7 @@
     <script src="static/js/utils.js"></script>
     <script src="static/js/radar.js"></script>
     <script src="static/js/socketEvent.js"></script>
-    <script src="static/js/dialog.js"></script>
+<!--    <script src="static/js/dialog.js"></script>-->
+    <script src="static/js/sidebar.js"></script>
 </body>
 </html>
