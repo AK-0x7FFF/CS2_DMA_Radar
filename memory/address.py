@@ -1,7 +1,9 @@
+from copy import copy
 from functools import wraps
 from logging import warning
 from typing import Self, Optional, Dict, Any, Callable, Iterable
 
+from memory.memory import VmmScatterMemoryRead
 from memory.process import CS2
 from utils.vec import Vec2, Vec3
 
@@ -46,53 +48,55 @@ class AddressCacheSystem:
 class AddressMemoryRead(AddressCacheSystem):
     def __init__(self, address: int) -> None:
         self.address = address
+        self._memory_reader = CS2.memory_read
 
     @AddressCacheSystem.address_caching_decorator
-    def bool(self) -> Optional[bool]: return CS2.memory_read.read_bool(self.address)
+    def bool(self) -> Optional[bool]: return self._memory_reader.read_bool(self.address)
 
     @AddressCacheSystem.address_caching_decorator
-    def i8(self) -> Optional[int]: return CS2.memory_read.read_i8(self.address)
+    def i8(self) -> Optional[int]: return self._memory_reader.read_i8(self.address)
 
     @AddressCacheSystem.address_caching_decorator
-    def u8(self) -> Optional[int]: return CS2.memory_read.read_i8(self.address)
+    def u8(self) -> Optional[int]: return self._memory_reader.read_i8(self.address)
 
     @AddressCacheSystem.address_caching_decorator
-    def i16(self) -> Optional[int]: return CS2.memory_read.read_i16(self.address)
+    def i16(self) -> Optional[int]: return self._memory_reader.read_i16(self.address)
 
     @AddressCacheSystem.address_caching_decorator
-    def u16(self) -> Optional[int]: return CS2.memory_read.read_u16(self.address)
+    def u16(self) -> Optional[int]: return self._memory_reader.read_u16(self.address)
 
     @AddressCacheSystem.address_caching_decorator
-    def i32(self) -> Optional[int]: return CS2.memory_read.read_i32(self.address)
+    def i32(self) -> Optional[int]: return self._memory_reader.read_i32(self.address)
 
     @AddressCacheSystem.address_caching_decorator
-    def u32(self) -> Optional[int]: return CS2.memory_read.read_u32(self.address)
+    def u32(self) -> Optional[int]: return self._memory_reader.read_u32(self.address)
 
     @AddressCacheSystem.address_caching_decorator
-    def i64(self) -> Optional[int]: return CS2.memory_read.read_i64(self.address)
+    def i64(self) -> Optional[int]: return self._memory_reader.read_i64(self.address)
 
     @AddressCacheSystem.address_caching_decorator
-    def u64(self) -> Optional[int]: return CS2.memory_read.read_u64(self.address)
+    def u64(self) -> Optional[int]: return self._memory_reader.read_u64(self.address)
 
     @AddressCacheSystem.address_caching_decorator
-    def float(self) -> Optional[float]: return CS2.memory_read.read_f32(self.address)
+    def float(self) -> Optional[float]: return self._memory_reader.read_f32(self.address)
 
     @AddressCacheSystem.address_caching_decorator
-    def vec(self, size: int) -> Optional[Iterable[float]]: return CS2.memory_read.read_vec(self.address, size)
+    def vec(self, size: int) -> Optional[Iterable[float]]: return self._memory_reader.read_vec(self.address, size)
 
     @AddressCacheSystem.address_caching_decorator
-    def vec2(self) -> Optional[Vec2]: return Vec2(*CS2.memory_read.read_vec(self.address, 2))
+    def vec2(self) -> Optional[Vec2]: return Vec2(*self._memory_reader.read_vec(self.address, 2))
 
     @AddressCacheSystem.address_caching_decorator
-    def vec3(self) -> Optional[Vec3]: return Vec3(*CS2.memory_read.read_vec(self.address, 3))
+    def vec3(self) -> Optional[Vec3]: return Vec3(*self._memory_reader.read_vec(self.address, 3))
 
     @AddressCacheSystem.address_caching_decorator
-    def str(self, size: int) -> Optional[str]: return CS2.memory_read.read_str(self.address, size)
+    def str(self, size: int) -> Optional[str]: return self._memory_reader.read_str(self.address, size)
 
 
 class Address(AddressMemoryRead):
-    def __init__(self, address: int) -> None:
+    def __init__(self, address: int, scatter_memory_read: VmmScatterMemoryRead | None = None) -> None:
         super().__init__(address)
+        if scatter_memory_read is not None: self.set_scatter(scatter_memory_read)
 
     def __repr__(self) -> str:
         return "Address(%s / %s)" % (self.address, hex(self.address))
@@ -127,8 +131,15 @@ class Address(AddressMemoryRead):
 
         return address
 
+    def set_scatter(self, scatter_memory_read: VmmScatterMemoryRead) -> Self:
+        self._memory_reader = scatter_memory_read
+        return self
+
     def copy(self) -> "Address":
-        return Address(self.address)
+        address = Address(self.address, self._memory_reader)
+        return address
+        # return Address(self.address)
+        # return copy(self)
 
 
 

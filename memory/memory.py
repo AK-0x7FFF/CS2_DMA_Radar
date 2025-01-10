@@ -3,7 +3,7 @@ from struct import unpack
 from typing import Self
 
 from memprocfs import FLAG_NOCACHE, FLAG_NOCACHEPUT
-from memprocfs.vmmpyc import VmmProcess
+from memprocfs.vmmpyc import VmmProcess, VmmScatterMemory
 
 from libs.pyMeow import MeowProcess
 from libs.pyMeow.pyMeow import r_bytes
@@ -12,9 +12,6 @@ from utils.memory_monitor import MemoryMonitor
 
 
 class MemoryReadAbstract(ABC):
-    _process: MeowProcess | VmmProcess
-
-
     @staticmethod
     def unpack_byte(byte: bytes, format_str: str) -> bool | int | float | bytes | str | None:
         if byte is None or not len(byte): return None
@@ -22,78 +19,60 @@ class MemoryReadAbstract(ABC):
         try: return unpack("<" + format_str, byte)[0]
         except Exception: return None
 
-    @classmethod
     @abstractmethod
-    def set_process(cls, process: MeowProcess | VmmProcess) -> Self:
+    def read_memory(self, address: int, byte_size: int) -> bytes | None:
         ...
 
-    @classmethod
-    @abstractmethod
-    def read_memory(cls, address: int, byte_size: int) -> bytes | None:
-        ...
-
-    @classmethod
     # @MemoryMonitor.read_decorator(lambda _, __: 1)
-    def read_bool(cls, address: int) -> bool | None:
-        return cls.unpack_byte(cls.read_memory(address, 1), "?")
+    def read_bool(self, address: int) -> bool | None:
+        return self.unpack_byte(self.read_memory(address, 1), "?")
 
-    @classmethod
     # @MemoryMonitor.read_decorator(lambda _, __: 1)
-    def read_i8(cls, address: int) -> int | None:
-        return cls.unpack_byte(cls.read_memory(address, 1), "b")
+    def read_i8(self, address: int) -> int | None:
+        return self.unpack_byte(self.read_memory(address, 1), "b")
 
-    @classmethod
     # @MemoryMonitor.read_decorator(lambda _, __: 1)
-    def read_u8(cls, address: int) -> int | None:
-        return cls.unpack_byte(cls.read_memory(address, 1), "B")
+    def read_u8(self, address: int) -> int | None:
+        return self.unpack_byte(self.read_memory(address, 1), "B")
 
-    @classmethod
     # @MemoryMonitor.read_decorator(lambda _, __: 2)
-    def read_i16(cls, address: int) -> int | None:
-        return cls.unpack_byte(cls.read_memory(address, 2), "h")
+    def read_i16(self, address: int) -> int | None:
+        return self.unpack_byte(self.read_memory(address, 2), "h")
 
-    @classmethod
     # @MemoryMonitor.read_decorator(lambda _, __: 2)
-    def read_u16(cls, address: int) -> int | None:
-        return cls.unpack_byte(cls.read_memory(address, 2), "H")
+    def read_u16(self, address: int) -> int | None:
+        return self.unpack_byte(self.read_memory(address, 2), "H")
 
-    @classmethod
     # @MemoryMonitor.read_decorator(lambda _, __: 4)
-    def read_i32(cls, address: int) -> int | None:
-        return cls.unpack_byte(cls.read_memory(address, 4), "i")
+    def read_i32(self, address: int) -> int | None:
+        return self.unpack_byte(self.read_memory(address, 4), "i")
 
-    @classmethod
     @MemoryMonitor.read_decorator(lambda _, __: 4)
-    def read_u32(cls, address: int) -> int | None:
-        return cls.unpack_byte(cls.read_memory(address, 4), "I")
+    def read_u32(self, address: int) -> int | None:
+        return self.unpack_byte(self.read_memory(address, 4), "I")
 
-    @classmethod
     # @MemoryMonitor.read_decorator(lambda _, __: 8)
-    def read_i64(cls, address: int) -> int | None:
-        return cls.unpack_byte(cls.read_memory(address, 8), "q")
+    def read_i64(self, address: int) -> int | None:
+        return self.unpack_byte(self.read_memory(address, 8), "q")
 
-    @classmethod
     # @MemoryMonitor.read_decorator(lambda _, __: 8)
-    def read_u64(cls, address: int) -> int | None:
-        return cls.unpack_byte(cls.read_memory(address, 8), "Q")
+    def read_u64(self, address: int) -> int | None:
+        return self.unpack_byte(self.read_memory(address, 8), "Q")
 
-    @classmethod
     # @MemoryMonitor.read_decorator(lambda _, __: 4)
-    def read_f32(cls, address: int) -> float | None:
-        return cls.unpack_byte(cls.read_memory(address, 4), "f")
+    def read_f32(self, address: int) -> float | None:
+        return self.unpack_byte(self.read_memory(address, 4), "f")
 
-    @classmethod
-    def read_vec(cls, address: int, size: int) -> list[float] | None:
-        byte = cls.read_memory(address, 4 * size)
+    def read_vec(self, address: int, size: int) -> list[float] | None:
+        byte = self.read_memory(address, 4 * size)
         if byte is None or not len(byte): return None
 
         try: return list(unpack("<%if" % size, byte))
         except Exception: return None
 
-    @classmethod
     # @MemoryMonitor.read_decorator(lambda _, kwargs: kwargs.get("byte_size", 50))
-    def read_str(cls, address: int, byte_size: int = 50) -> str | None:
-        byte = cls.read_memory(address, byte_size)
+    def read_str(self, address: int, byte_size: int = 50) -> str | None:
+        byte = self.read_memory(address, byte_size)
         if byte is None or not len(byte): return None
 
         try: return byte.split(b"\x00")[0].decode("utf-8")
@@ -102,29 +81,28 @@ class MemoryReadAbstract(ABC):
 
 
 class MeowMemoryReadStruct(MemoryReadAbstract):
-    _process: StructMeowProcess
+    def __init__(self, process: MeowProcess) -> None:
+        self.process = process.process
 
-    @classmethod
-    def set_process(cls, process: MeowProcess) -> Self:
-        cls._process = process.process
-        return cls
-
-    @classmethod
     @MemoryMonitor.read_decorator(lambda args, __: args[2])
-    def read_memory(cls, address: int, byte_size: int) -> bytes | None:
-        return r_bytes(cls._process, address, byte_size)
+    def read_memory(self, address: int, byte_size: int) -> bytes | None:
+        return r_bytes(self.process, address, byte_size)
 
 
 class VmmMemoryReadStruct(MemoryReadAbstract):
-    _process: VmmProcess
+    def __init__(self, process: VmmProcess) -> None:
+        self.process = process
 
-    @classmethod
-    def set_process(cls, process: VmmProcess) -> Self:
-        cls._process = process
-        return cls
-
-    @classmethod
     @MemoryMonitor.read_decorator(lambda args, __: args[2])
-    def read_memory(cls, address: int, byte_size: int) -> bytes | None:
-        return cls._process.memory.read(address, byte_size, FLAG_NOCACHE | FLAG_NOCACHEPUT)
+    def read_memory(self, address: int, byte_size: int) -> bytes | None:
+        return self.process.memory.read(address, byte_size, FLAG_NOCACHE | FLAG_NOCACHEPUT)
+
+
+class VmmScatterMemoryRead(MemoryReadAbstract):
+    def __init__(self, scatter: VmmScatterMemory) -> None:
+        self.scatter = scatter
+
+    @MemoryMonitor.read_decorator(lambda args, __: args[2])
+    def read_memory(self, address: int, byte_size: int) -> bytes | None:
+        return self.scatter.read(address, byte_size)
 

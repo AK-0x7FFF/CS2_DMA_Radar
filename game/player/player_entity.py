@@ -4,6 +4,7 @@ import game
 from game.player.player_controller import PlayerController
 from game.player.player_pawn import PlayerPawn
 from memory.address import Address
+from memory.memory import VmmScatterMemoryRead
 from memory.process import CS2
 
 
@@ -26,7 +27,7 @@ class PlayerEntity(PlayerController, PlayerPawn):
         return self.controller_address == other.controller_address and self.pawn_address == other.pawn_address
 
     def __hash__(self) -> int:
-        return hash((self.controller_address, self.pawn_address, ))
+        return hash((self.controller_address.address, self.pawn_address.address, ))
 
 
     @classmethod
@@ -43,6 +44,12 @@ class PlayerEntity(PlayerController, PlayerPawn):
         if not player_pawn_address: return None
 
         return cls(player_controller_address, player_pawn_address)
+
+    def get_scatter_mode(self, scatter_memory_read: VmmScatterMemoryRead) -> "PlayerEntity":
+        return PlayerEntity(
+            self.controller_address.copy().set_scatter(scatter_memory_read),
+            self.pawn_address.copy().set_scatter(scatter_memory_read)
+        )
 
 
     @property

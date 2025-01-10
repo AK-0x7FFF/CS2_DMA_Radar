@@ -81,7 +81,7 @@ class CS2MeowMode:
                 cls.tier0,
             )]))
 
-        cls.memory_read = MeowMemoryReadStruct.set_process(cls.process)
+        cls.memory_read = MeowMemoryReadStruct(cls.process)
         return cls
 
 
@@ -152,7 +152,7 @@ class CS2VmmMode:
                     cls.tier0,
                 )]))
 
-        cls.memory_read = VmmMemoryReadStruct.set_process(cls.process)
+        cls.memory_read = VmmMemoryReadStruct(cls.process)
         info("Found %s🎉" % (cls.PROCESS_NAME, ))
 
         return cls
@@ -164,6 +164,7 @@ class CS2(CS2MeowMode, CS2VmmMode):
     PROCESS_NAME = "cs2.exe"
     WINDOW_NAME = "Counter-Strike 2"
 
+    memory_mode: str | None = None
     vmm_device:  Vmm | None = None
     process:     MeowProcess | VmmProcess | None = None
     memory_read: MemoryReadAbstract | None = None
@@ -195,6 +196,7 @@ class CS2(CS2MeowMode, CS2VmmMode):
             )
 
         info("toggle to 🐱[Meow Mode]!")
+        cls.memory_mode = "meow"
         return cls
 
 
@@ -222,6 +224,7 @@ class CS2(CS2MeowMode, CS2VmmMode):
             )
 
         info("toggle to 👾[DMA Mode]!")
+        cls.memory_mode = "vmm"
         return cls
 
 
@@ -294,10 +297,10 @@ class CS2(CS2MeowMode, CS2VmmMode):
         ))()
 
         def dict_2_class(arg: dict[str, int | dict]):
-            return type("Schemas", (SchemasTypeHint,), {
+            return type("Schemas", (SchemasTypeHint,), ({
                 key: dict_2_class(value) if isinstance(value, dict) else value
                 for key, value in arg.items()
-            })()
+            } | {"__dict__": arg}))()
 
         schemas = dict_2_class(data.get("schemas"))
 

@@ -22,7 +22,7 @@ from runtime.map_update import map_update
 from runtime.player_dot import player_dot
 from utils.logger_setup import logger_setup
 from utils.memory_monitor import MemoryMonitor
-from utils.misc import TimeoutCounter
+from utils.misc import TimeoutCounter, TimeCounter
 
 
 async def socketio_setup() -> socketio.AsyncClient:
@@ -117,6 +117,8 @@ async def main() -> None:
         player_list_timer.start(0)
 
         while True:
+            Address.clear_cache()
+
             # with TimeCounter():
             if not sio.connected:
                 warning("⚠️ waiting for reconnect, pause 1 sec.")
@@ -140,7 +142,7 @@ async def main() -> None:
                 except Exception as err: error(err)
             # await asyncio.sleep(uniform(0, .2))
 
-            Address.clear_cache()
+
             # MemoryMonitor.reset()
 
     async def life_check_loop() -> None:
