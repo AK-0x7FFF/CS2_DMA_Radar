@@ -98,6 +98,12 @@ var radar = new (function() {
         this.dotSize = 40;
 
         this.draw = function() {
+            targetMapData = this.parent.map_data[this.parent.map.mapName];
+            if (targetMapData == null) {
+                $("#playerDot").empty()
+                return;
+            };
+
             if ($("#playerDot").children().length != this.parent.players.length) {
                 lengthDiffer = $("#playerDot").children().length - this.parent.players.length
                 if (lengthDiffer < 0) {
@@ -112,34 +118,18 @@ var radar = new (function() {
                         $("#playerDot").append(dot);
                     }
                 } else {
-                    dots = $("#playerDot div").slice(-1 - Math.abs(lengthDiffer), -1).remove()
+                    $("#playerDot div").slice(-1 - Math.abs(lengthDiffer), -1).remove()
                 }
-
-//                $("#playerDot").empty();
-//
-//                for (let i = 0; i < this.parent.players.length; i++) {
-//                    dot = $("<div>", {
-//                        "class": "playerDot",
-//                        "style": {
-//                            "left": (this.parent.element.offsetWidth / 2) + "px",
-//                            "top": (this.parent.element.offsetHeight / 2) + "px",
-//                        }
-//                    });
-//                    $("#playerDot").append(dot);
-//                }
             }
+
             dots = $("#playerDot div")
-
             this.parent.players.forEach((player, index) => {
-                targetMapData = this.parent.map_data[this.parent.map.mapName];
-                if (targetMapData == null) {return;};
-
-                [x, y] = world2Map(player["pos"])
-                [x, y] = rotate(x, y)
+                [x, y] = world2Map(player["pos"]);
+                [x, y] = rotate(x, y);
 
                 d = -player["direction"]["y"] + 90 + this.parent.state.rotation;
 
-                dot = dots.eq(index)
+                dot = dots.eq(index);
 //                dot.attr("src",  );
                 imageUrl = "/static/img/" + (player["team_num"] == 2 ? "player_dot_t.png" : player["team_num"] == 3 ? "player_dot_ct.png" : "player_dot.png")
                 dot.css({
@@ -173,21 +163,21 @@ var radar = new (function() {
         };
 
         this.draw = function() {
-            bomb = $("#bombDot")
+            bomb = $("#bombDot");
 
             if (!this.planted) {
                 bomb.hide()
             } else {
-                [x, y] = world2Map(this.bomb.pos)
-                [x, y] = rotate(x, y)
+                [x, y] = world2Map(this.bomb.pos);
+                [x, y] = rotate(x, y);
 
                 bomb.css({
                     "left": x,
                     "top": y,
                     "width": 33 * this.parent.state.scale + "px",
                     "height": 24 * this.parent.state.scale + "px"
-                })
-                bomb.show()
+                });
+                bomb.show();
             }
         };
     })(this);
